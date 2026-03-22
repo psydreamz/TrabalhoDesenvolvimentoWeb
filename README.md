@@ -26,7 +26,7 @@ Este projeto foi construído com as melhores e mais modernas práticas do ecossi
 * **Spring Data JPA**: Para a persistência de dados de forma simplificada, sem precisarmos escrever queries SQL manualmente.
 * **H2 Database**: Um banco de dados em memória, perfeito para testes rápidos (os dados reiniciam com a aplicação).
 * **Maven**: Gerenciador de dependências e build do projeto.
-* ]**Padrão MVC**: Código estruturado em camadas claras: `Model`, `Repository`, `Service` e `Controller`.
+* **Padrão MVC**: Código estruturado em camadas claras: `Model`, `Repository`, `Service` e `Controller`.
 
 ---
 
