@@ -19,8 +19,8 @@ import com.baozistore.service.ClienteService;
 
 @RestController
 @RequestMapping("/api/clientes")
-
 public class ClienteController {
+    
     @Autowired
     private ClienteService service;
 
@@ -31,7 +31,23 @@ public class ClienteController {
     }
 
     @PostMapping
-    public ResponseEntity<Cliente> create(@RequestBody Cliente request) {
+    public ResponseEntity<?> create(@RequestBody Cliente request) {
+        
+        if (request == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Erro: O corpo da requisição não pode estar vazio.");
+        }
+
+        if (request.getNome() == null || request.getNome().trim().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Erro de Validação: O atributo 'nome' é obrigatório.");
+        }
+
+        if (request.getClienteDesde() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Erro de Validação: O atributo 'clienteDesde' é obrigatório.");
+        }
+
         Cliente clienteNovo = service.create(request);
         return new ResponseEntity<>(clienteNovo, HttpStatus.CREATED);
     }
@@ -42,6 +58,7 @@ public class ClienteController {
         return cliente.map(ResponseEntity::ok)
                       .orElseGet(() -> ResponseEntity.notFound().build());
     }
+    
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarCliente(@PathVariable Long id) {
         service.deleteById(id);

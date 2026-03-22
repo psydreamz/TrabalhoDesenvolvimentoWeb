@@ -1,37 +1,52 @@
 package com.baozistore.controller;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.baozistore.entity.Produto;
 import com.baozistore.service.ProdutoService;
 
 @RestController
 @RequestMapping("/api/produtos")
-
 public class ProdutoController {
+
     @Autowired
     private ProdutoService service;
 
     @GetMapping
     public ResponseEntity<List<Produto>> getAll() {
-        List<Produto> produtos = service.getAll();
-        return ResponseEntity.ok(produtos);
+        return ResponseEntity.ok(service.getAll());
     }
 
     @PostMapping
-    public ResponseEntity<Produto> create(@RequestBody Produto request) {
+    public ResponseEntity<?> create(@RequestBody Produto request) {
+        
+        if (request == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Erro: O corpo da requisição não pode estar vazio.");
+        }
+
+        if (request.getNome() == null || request.getNome().trim().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Erro de Validação: O atributo 'nome' é obrigatório.");
+        }
+
+        if (request.getPreco() == null || request.getPreco().compareTo(BigDecimal.ZERO) <= 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Erro de Validação: O 'preco' é obrigatório e deve ser maior que zero.");
+        }
+
+        if (request.getEstoque() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Erro de Validação: O status de 'estoque' (true/false) é obrigatório.");
+        }
+
         Produto produtoNovo = service.create(request);
         return new ResponseEntity<>(produtoNovo, HttpStatus.CREATED);
     }
@@ -42,6 +57,7 @@ public class ProdutoController {
         return produto.map(ResponseEntity::ok)
                       .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarProduto(@PathVariable Long id) {
         service.deleteById(id);
