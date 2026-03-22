@@ -18,7 +18,7 @@ import com.baozistore.entity.Pedido;
 import com.baozistore.service.PedidoService;
 
 @RestController
-@RequestMapping("/pedido")
+@RequestMapping("/api/pedidos")
 
 public class PedidoController {
     @Autowired
@@ -26,8 +26,8 @@ public class PedidoController {
 
     @GetMapping
     public ResponseEntity<List<Pedido>> getAll() {
-        List<Pedido> pedido = service.getAll();
-        return ResponseEntity.ok(pedido);
+        List<Pedido> pedidos = service.getAll();
+        return ResponseEntity.ok(pedidos);
     }
 
     @PostMapping
@@ -37,13 +37,13 @@ public class PedidoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Pedido> buscarClientePorId(@PathVariable Long id) {
+    public ResponseEntity<Pedido> buscarPedidoPorId(@PathVariable Long id) {
         Optional<Pedido> pedido = service.findById(id);
         return pedido.map(ResponseEntity::ok)
                       .orElseGet(() -> ResponseEntity.notFound().build());
     }
     @DeleteMapping("/{id}")
-    public ResponseEntity deletarPedido(@PathVariable Long id) {
+    public ResponseEntity<Void> deletarPedido(@PathVariable Long id) {
         service.deleteById(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

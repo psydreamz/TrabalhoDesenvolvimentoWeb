@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,7 +18,7 @@ import com.baozistore.entity.Produto;
 import com.baozistore.service.ProdutoService;
 
 @RestController
-@RequestMapping("/clientes")
+@RequestMapping("/api/produtos")
 
 public class ProdutoController {
     @Autowired
@@ -25,24 +26,24 @@ public class ProdutoController {
 
     @GetMapping
     public ResponseEntity<List<Produto>> getAll() {
-        List<Produto> clientes = service.getAll();
-        return ResponseEntity.ok(clientes);
+        List<Produto> produtos = service.getAll();
+        return ResponseEntity.ok(produtos);
     }
 
     @PostMapping
-    public ResponseEntity<Produto> create(Produto request) {
-        Produto clienteNovo = service.create(request);
-        return new ResponseEntity<>(clienteNovo, HttpStatus.CREATED);
+    public ResponseEntity<Produto> create(@RequestBody Produto request) {
+        Produto produtoNovo = service.create(request);
+        return new ResponseEntity<>(produtoNovo, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Produto> buscarClientePorId(@PathVariable Long id) {
-        Optional<Produto> cliente = service.findById(id);
-        return cliente.map(ResponseEntity::ok)
+    public ResponseEntity<Produto> buscarProdutoPorId(@PathVariable Long id) {
+        Optional<Produto> produto = service.findById(id);
+        return produto.map(ResponseEntity::ok)
                       .orElseGet(() -> ResponseEntity.notFound().build());
     }
     @DeleteMapping("/{id}")
-    public ResponseEntity deletarCliente(@PathVariable Long id) {
+    public ResponseEntity<Void> deletarProduto(@PathVariable Long id) {
         service.deleteById(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
